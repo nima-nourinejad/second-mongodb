@@ -106,6 +106,11 @@ async function fullProcess() {
 	"New Name",
 	"New Author"
   );
+
+//  
+  await deleteDocument_deleteMany({ author: "nima" });
+    await deleteDocument("675bd87608e34bdf31d11d99");
+	 await deleteDocument_findByIdAndRemove("675bd87608e34bdf31d11d99");
 }
 
 const schema = new mongoose.Schema({
@@ -204,6 +209,36 @@ async function updateDocument_findAndUpdate(id, newName, newAuthor) {
 	  console.log(result);
 	} catch (err) {
 	  console.error("Error updating document: ", err);
+	}
+  }
+
+  async function deleteDocument(id) {
+	try {
+	  const result = await Model.deleteOne({ _id: id});
+	  console.log(result);
+	}
+	catch (err) {
+	  console.error("Error deleting document: ", err);
+	}
+  }
+
+  async function deleteDocument_findByIdAndRemove(id) {
+	try {
+	  const result = await Model.findByIdAndDelete(id);
+	  console.log(`Deleted document with id ${id}: ${result}`);
+	}
+	catch (err) {
+	  console.error("Error deleting document: ", err);
+	}
+  }
+
+  async function deleteDocument_deleteMany(filter) {
+	try {
+	  const result = await Model.deleteMany(filter);
+	  console.log(result);
+	}
+	catch (err) {
+	  console.error("Error deleting document: ", err);
 	}
   }
 
