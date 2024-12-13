@@ -97,24 +97,24 @@ async function fullProcess() {
     "New Author"
   );
   await updateDocument_UpdateDirectly(
-	"675bd87608e34bdf31d11d99",
-	"New Name",
-	"New Author"
+    "675bd87608e34bdf31d11d99",
+    "New Name",
+    "New Author"
   );
   await updateDocument_findAndUpdate(
-	"675bd87608e34bdf31d11d99",
-	"New Name",
-	"New Author"
+    "675bd87608e34bdf31d11d99",
+    "New Name",
+    "New Author"
   );
 
-//  
+  //
   await deleteDocument_deleteMany({ author: "nima" });
-    await deleteDocument("675bd87608e34bdf31d11d99");
-	 await deleteDocument_findByIdAndRemove("675bd87608e34bdf31d11d99");
+  await deleteDocument("675bd87608e34bdf31d11d99");
+  await deleteDocument_findByIdAndRemove("675bd87608e34bdf31d11d99");
 }
 
 const schema = new mongoose.Schema({
-  name: String,
+  name: { type: String, required: true },
   author: String,
   tags: [String],
   date: { type: Date, default: Date.now },
@@ -177,7 +177,7 @@ async function updateDocument_QueryFirst(id, newName, newAuthor) {
 
 async function updateDocument_UpdateDirectly(id, newName, newAuthor) {
   try {
-    const result = await Model.update(
+    const result = await Model.updateOne(
       { _id: id },
       {
         $set: {
@@ -186,6 +186,15 @@ async function updateDocument_UpdateDirectly(id, newName, newAuthor) {
         },
       }
     );
+    // const result = await Model.updateMany(
+    //   { _id: id },
+    //   {
+    //     $set: {
+    //       name: newName,
+    //       author: newAuthor,
+    //     },
+    //   }
+    // );
     console.log("document : updated");
     console.log(result);
   } catch (err) {
@@ -194,52 +203,49 @@ async function updateDocument_UpdateDirectly(id, newName, newAuthor) {
 }
 
 async function updateDocument_findAndUpdate(id, newName, newAuthor) {
-	try {
-	  const result = await Model.findByIdAndUpdate(
-		id,
-		{
-		  $set: {
-			name: newName,
-			author: newAuthor,
-		  },
-		},
-		{ new: true }
-	  );
-	  console.log("document : updated");
-	  console.log(result);
-	} catch (err) {
-	  console.error("Error updating document: ", err);
-	}
+  try {
+    const result = await Model.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          name: newName,
+          author: newAuthor,
+        },
+      },
+      { new: true }
+    );
+    console.log("document : updated");
+    console.log(result);
+  } catch (err) {
+    console.error("Error updating document: ", err);
   }
+}
 
-  async function deleteDocument(id) {
-	try {
-	  const result = await Model.deleteOne({ _id: id});
-	  console.log(result);
-	}
-	catch (err) {
-	  console.error("Error deleting document: ", err);
-	}
+async function deleteDocument(id) {
+  try {
+    const result = await Model.deleteOne({ _id: id });
+    console.log(result);
+  } catch (err) {
+    console.error("Error deleting document: ", err);
   }
+}
 
-  async function deleteDocument_findByIdAndRemove(id) {
-	try {
-	  const result = await Model.findByIdAndDelete(id);
-	  console.log(`Deleted document with id ${id}: ${result}`);
-	}
-	catch (err) {
-	  console.error("Error deleting document: ", err);
-	}
+async function deleteDocument_findByIdAndRemove(id) {
+  try {
+    const result = await Model.findByIdAndDelete(id);
+    console.log(`Deleted document with id ${id}: ${result}`);
+  } catch (err) {
+    console.error("Error deleting document: ", err);
   }
+}
 
-  async function deleteDocument_deleteMany(filter) {
-	try {
-	  const result = await Model.deleteMany(filter);
-	  console.log(result);
-	}
-	catch (err) {
-	  console.error("Error deleting document: ", err);
-	}
+async function deleteDocument_deleteMany(filter) {
+  try {
+    const result = await Model.deleteMany(filter);
+    console.log(result);
+  } catch (err) {
+    console.error("Error deleting document: ", err);
   }
+}
 
 fullProcess();
