@@ -114,7 +114,8 @@ async function fullProcess() {
 }
 
 const schema = new mongoose.Schema({
-  name: { type: String, required: true },
+//   name: { type: String, required: true },
+  name: { type: String, required: function () {return this.isPublished} },
   author: String,
   tags: [String],
   date: { type: Date, default: Date.now },
