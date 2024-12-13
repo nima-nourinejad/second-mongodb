@@ -91,6 +91,21 @@ async function fullProcess() {
   await dropAllCollections();
   await reloadDatabase();
   await getDocuments();
+  await updateDocument_QueryFirst(
+    "675bd87608e34bdf31d11d99",
+    "New Name",
+    "New Author"
+  );
+  await updateDocument_UpdateDirectly(
+	"675bd87608e34bdf31d11d99",
+	"New Name",
+	"New Author"
+  );
+  await updateDocument_findAndUpdate(
+	"675bd87608e34bdf31d11d99",
+	"New Name",
+	"New Author"
+  );
 }
 
 const schema = new mongoose.Schema({
@@ -136,5 +151,60 @@ async function getDocuments() {
     console.error("Error getting documents: ", err);
   }
 }
+
+async function updateDocument_QueryFirst(id, newName, newAuthor) {
+  try {
+    const document = await Model.findById(id);
+    if (!document) {
+      console.log("update faild : document not found");
+      return;
+    }
+    document.name = newName;
+    document.author = newAuthor;
+    // document.set({ name: newName, author: newAuthor });
+    const result = await document.save();
+    console.log("document : updated");
+    console.log(result);
+  } catch (err) {
+    console.error("Error updating document: ", err);
+  }
+}
+
+async function updateDocument_UpdateDirectly(id, newName, newAuthor) {
+  try {
+    const result = await Model.update(
+      { _id: id },
+      {
+        $set: {
+          name: newName,
+          author: newAuthor,
+        },
+      }
+    );
+    console.log("document : updated");
+    console.log(result);
+  } catch (err) {
+    console.error("Error updating document: ", err);
+  }
+}
+
+async function updateDocument_findAndUpdate(id, newName, newAuthor) {
+	try {
+	  const result = await Model.findByIdAndUpdate(
+		id,
+		{
+		  $set: {
+			name: newName,
+			author: newAuthor,
+		  },
+		},
+		{ new: true }
+	  );
+	  console.log("document : updated");
+	  console.log(result);
+	} catch (err) {
+	  console.error("Error updating document: ", err);
+	}
+  }
 
 fullProcess();
